@@ -30,12 +30,22 @@ function VoteFunc (VoteDate: number) {
 }
 function DoVote (name: number, vote: number) {
     radio.sendValue(convertToText(name), vote)
+    MemoBootTime = control.millis()
+    basic.showArrow(ArrowNames.North)
+    while (MemoBootTime + 5000 >= control.millis()) {
+        if (parseFloat(CheckHash) == control.deviceSerialNumber()) {
+            PathVote = false
+            break;
+        }
+    }
 }
 radio.onReceivedString(function (receivedString) {
     CheckHash = receivedString
 })
-let VoteString = ""
 let CheckHash = ""
+let MemoBootTime = 0
+let VoteString = ""
+let PathVote = false
 let a = 0
 let TempReceived = 0
 music.setVolume(31)
@@ -52,13 +62,9 @@ basic.clearScreen()
 a = 0
 radio.setGroup(90)
 let votedate = VoteFunc(VoteNum)
-DoVote(control.deviceSerialNumber(), votedate)
-let MemoBootTime = control.millis()
-basic.showArrow(ArrowNames.North)
-while (MemoBootTime + 5000 >= control.millis()) {
-    if (parseFloat(CheckHash) == control.deviceSerialNumber()) {
-        break;
-    }
+PathVote = true
+if (PathVote) {
+    DoVote(control.deviceSerialNumber(), votedate)
 }
 basic.showIcon(IconNames.Yes)
 basic.pause(500)
